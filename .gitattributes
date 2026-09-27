@@ -1,0 +1,4 @@
+# Preserve the imported baseline bytes across checkouts.
+desktop/** -text
+firmware/** -text
+docs/original/** -text
