@@ -2,3 +2,4 @@
 desktop/** -text
 firmware/** -text
 docs/original/** -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text

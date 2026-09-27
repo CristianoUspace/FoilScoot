@@ -46,6 +46,14 @@ The baseline does not compute pitch/roll/yaw angles, pumping frequency, efficien
 
 ## Contributing and license
 
+## First session: recordings and hardware
+
+The owner-supplied first session is available in [results](results/README.md): the recorded CSV, Italian analysis, summary plot and shortened footage. [Hardware photographs and a live-client screen recording](images/README.md) show the setup on the board.
+
+Both MP4 files are stored with Git LFS. To download them in a local clone, install Git LFS and run `git lfs install` followed by `git lfs pull`. The analysis refers to the original full-length video; its time references must not be assumed to match the shortened clip.
+
+## Contributing and license
+
 See [CONTRIBUTING.md](CONTRIBUTING.md). Project code and documentation are provided under the [MIT license](LICENSE). Bundled third-party sources retain their original MIT notices; see [third-party notices](THIRD_PARTY_NOTICES.md). Preserve original FoilScoot names in the baseline code to keep its provenance clear.
 
 Run the offline checks with `python -m unittest discover -s tests -v`.
