@@ -44,8 +44,6 @@ Nominal 100 Hz filtered acceleration (g, including gravity) and gyro (degrees/s,
 
 The baseline does not compute pitch/roll/yaw angles, pumping frequency, efficiency or automatic video alignment. The new inspection tool reports timing and basic ranges only. There is no onboard recording or recovery of disconnected samples.
 
-## Contributing and license
-
 ## First session: recordings and hardware
 
 The owner-supplied first session is available in [results](results/README.md): the recorded CSV, Italian analysis, summary plot and shortened footage. [Hardware photographs and a live-client screen recording](images/README.md) show the setup on the board.
