@@ -1,0 +1,74 @@
+FoilScoot CLIENT 1.6 — 28 settembre 2026
+
+INSTALLAZIONE
+1. Chiudi il vecchio client con il pulsante Chiudi FoilScoot.
+2. Estrai questo ZIP in una cartella separata, per esempio FoilScoot_v1.6.
+3. Apri FoilScoot_Laptop e avvia Avvia_FoilScoot.cmd.
+4. Collega il laptop alla rete FoilScoot-IMU. La pagina resta su 127.0.0.1:8080.
+Non occorre caricare un nuovo firmware. Python 3.10+; nessuna libreria aggiuntiva.
+Il pacchetto non contiene né modifica lo sketch ESP32 e la configurazione batteria.
+Non eseguire contemporaneamente il client 1.5 e il client 1.6.
+Le nuove registrazioni sono nella sottocartella registrazioni di questo client.
+La cartella viene creata al primo avvio. I vecchi CSV restano dove sono.
+
+USO DELLO ZERO
+Posa il deck nel piano che vuoi usare come riferimento, con IMU verso l'alto.
+Premi Ricalibra IMU e azzera tavola e conferma.
+Il firmware calibra il giroscopio, poi il client acquisisce 2 secondi di dati.
+Non toccare la tavola fino a Zero della tavola: Acquisito.
+Pitch e roll saranno circa 0°. Avvia registrazione diventa disponibile.
+Se ci sono urti, rotazioni, deriva della posa o dati discontinui, ripeti.
+Non è possibile cambiare zero durante una registrazione: prima Stop e salva.
+Lo zero resta valido fra sessioni sulla stessa connessione, se non sposti l'IMU.
+Dopo disconnessione, riavvio scheda o riavvio client occorre rifare lo zero.
+La nuova calibrazione invalida subito il vecchio riferimento anche se fallisce.
+
+COSA MOSTRANO I GRAFICI
+Accelerazione e giroscopio sono espressi nel riferimento della posa acquisita.
+Si ruotano gli assi: non si sottrae la gravità e non si impone artificialmente 1 g.
+A riposo: X e Y circa zero, Z circa la norma misurata (nel tuo test circa 1,04 g).
+Pitch positivo = prua alta. Roll positivo = bordo destro basso.
+Pitch e roll sono ANGOLI APPARENTI DA ACCELEROMETRO, senza fusione gyro.
+Movimenti rapidi e urti possono falsarli. Non rappresentano ancora una stima
+dinamica completa dell'assetto. Il gyro continua a misurare le velocità angolari.
+Non viene stimato uno yaw assoluto. Lo zero non distingue errore del sensore,
+inclinazione del montaggio e inclinazione del piano scelto.
+
+CSV 1.6
+Le prime 20 colonne restano quelle della 1.5, con le misure originali intatte.
+Le colonne acc_x/y/z_g e gyro_x/y/z_dps NON sono azzerate né ruotate.
+Le colonne aggiunte sono:
+  acc_ref_x_g, acc_ref_y_g, acc_ref_z_g
+  gyro_ref_x_dps, gyro_ref_y_dps, gyro_ref_z_dps
+  pitch_ref_deg, roll_ref_deg
+  zero_id, zero_reference_json, client_version
+Ogni sessione contiene un evento client BOARD_ZERO_REFERENCE dopo START.
+Il JSON di quell'evento contiene matrice degli assi, medie, deviazioni standard,
+numero campioni, boot, data e tempi ESP della finestra di acquisizione zero.
+L'evento client non ha un nuovo device_us: non è un marcatore LED.
+zero_id collega ogni riga al riferimento usato. I vecchi programmi di analisi
+devono leggere le colonne per nome e tollerare le colonne aggiunte.
+Il riferimento non è ricavato dal vecchio CSV del tavolo: si acquisisce dal vivo.
+
+METODO E CONTROLLI
+Il nuovo asse Z è parallelo alla media dell'accelerazione a riposo; X è la
+proiezione dell'asse X del sensore sul piano ortogonale a Z; Y completa la terna.
+La stessa rotazione è applicata ad accelerometro e giroscopio.
+Finestra >=2 s, >=180 campioni; intervalli <=50 ms e timestamp crescenti.
+Deviazione standard <=0,025 g per asse accelerometrico e <=0,8 gradi/s gyro.
+Media gyro <=0,8 gradi/s in modulo, picco gyro <=3 gradi/s per asse.
+Escursione accelerometrica <=0,12 g per asse; variazione fra medie del primo
+e ultimo quarto della finestra <=0,012 g in norma. Norma media 0,75–1,25 g.
+IMU rivolta verso l'alto: Z normalizzato >=0,5.
+Questi controlli verificano stabilità plausibile, non certificano l'orizzontale.
+
+VERIFICHE ESEGUITE
+11 test automatici superati: rotazione, conservazione gravità, segni,
+acquisizione dal CSV reale sul tavolo, rifiuto di un tratto reale in movimento,
+deriva lenta, dati discontinui, posa invertita, flusso calibrazione/registrazione,
+misure originali e riferimento nel CSV, invalidazione al riavvio/ricalibrazione.
+Pagina verificata nel browser con dati simulati: calibrazione, zero acquisito,
+avvio, Stop e salvataggio. Nessuna prova in diretta sull'ESP32 in questa sessione.
+
+PER TORNARE ALLA 1.5
+Chiudi la 1.6 e avvia il precedente Avvia_FoilScoot.cmd dalla vecchia cartella.
